@@ -47,7 +47,10 @@ class Level(levelBase.Level):
 			path = os.path.join('data', 'maps', self.level, 'images')
 
 		block, rect = load_image(os.path.join(path, 'block.png'))
-		character, rect = load_image(os.path.join(path, 'character.png'), -1)
+		character01, rect = load_image(os.path.join(path, 'character01.png'), -1)
+		character02, rect = load_image(os.path.join(path, 'character02.png'), -1)
+		character03, rect = load_image(os.path.join(path, 'character03.png'), -1)
+		character = [character01, character02, character03]
 		pellet, rect = load_image(os.path.join(path, 'pellet.png'), -1)
 		spellet, rect = load_image(os.path.join(path, 'super_pellet.png'), -1)
 		return [block, character, pellet, spellet]

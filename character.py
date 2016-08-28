@@ -6,9 +6,11 @@ import pygame
 class Character(basicSprite.Sprite):
 	"""This is our character that will move around the screen"""
 
-	def __init__(self, centerPoint, image):
+	def __init__(self, centerPoint, image_list):
+		self.image_list = image_list
+
 		"""initialize base class"""
-		basicSprite.Sprite.__init__(self, centerPoint, image)
+		basicSprite.Sprite.__init__(self, centerPoint, image_list[1])
 
 		"""Initialize the number of pellets collected"""
 		self.pellets = 0
@@ -23,6 +25,8 @@ class Character(basicSprite.Sprite):
 
 		"""By default we are not in the "super" state"""
 		self.superState = False
+
+		self.steps = 0
 
 	def MoveKeyDown(self, key):
 		"""This function sets the xMove or yMove variables that will
@@ -60,6 +64,20 @@ class Character(basicSprite.Sprite):
 		if (self.xMove == 0) and (self.yMove == 0):
 			"""If we aren't moving just get out of here"""
 			return
+
+		if self.steps < 10:
+			self.image = self.image_list[0]
+		elif (self.steps > 10) and (self.steps < 20):
+			self.image = self.image_list[2]
+		elif (self.steps > 20) and (self.steps < 30):
+			self.image = self.image_list[1]
+		elif (self.steps > 30) and (self.steps < 40):
+			self.image = self.image_list[2]
+
+		if self.steps == 40:
+			self.steps = 0
+		else:
+			self.steps += 1
 
 		"""All right we must be moving!"""
 		self.rect.move_ip(self.xMove, self.yMove)  # moves the rectangle, in place
