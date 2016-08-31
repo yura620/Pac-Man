@@ -1,6 +1,7 @@
 import basicSprite
 from pygame.locals import *
 import pygame
+import time
 
 
 class Character(basicSprite.Sprite):
@@ -27,6 +28,10 @@ class Character(basicSprite.Sprite):
 		self.superState = False
 
 		self.steps = 0
+
+		self.superState = False
+		self.superState_start = 0
+		self.superState_length = 5
 
 	def MoveKeyDown(self, key):
 		"""This function sets the xMove or yMove variables that will
@@ -58,8 +63,12 @@ class Character(basicSprite.Sprite):
 		elif key == K_DOWN:
 			self.yMove += -self.y_dist
 
-	def update(self, block_group, pellet_group):#, super_pellet_group, monster_group):
+	def update(self, block_group, pellet_group, spellet_group):  # , monster_group):
 		"""Called when the Snake sprite should update itself"""
+
+		if self.superState:
+			if (time.time() - self.superState_start) > self.superState_length:
+				self.superState = False
 
 		if (self.xMove == 0) and (self.yMove == 0):
 			"""If we aren't moving just get out of here"""
@@ -67,19 +76,14 @@ class Character(basicSprite.Sprite):
 
 		"""Add Pac-Man mouth motion while moving"""
 		cur_image = self.image_list[1]
-		if self.steps < 10:
-			cur_image = self.image_list[0]
-		elif (self.steps > 10) and (self.steps < 20):
-			cur_image = self.image_list[2]
-		elif (self.steps > 20) and (self.steps < 30):
+		if (self.steps >= 0) and (self.steps < 10):
 			cur_image = self.image_list[1]
-		elif (self.steps > 30) and (self.steps < 40):
+		elif (self.steps >= 10) and (self.steps < 20):
 			cur_image = self.image_list[2]
-
-		if self.steps == 40:
-			self.steps = 0
-		else:
-			self.steps += 1
+		elif (self.steps >= 20) and (self.steps < 30):
+			cur_image = self.image_list[0]
+		elif (self.steps >= 30) and (self.steps < 40):
+			cur_image = self.image_list[2]
 
 		"""Rotate Pac-Man according movement direction"""
 		if self.xMove > 0:
@@ -97,9 +101,31 @@ class Character(basicSprite.Sprite):
 		if pygame.sprite.spritecollideany(self, block_group):
 			"""IF we hit a block, don't move - reverse the movement"""
 			self.rect.move_ip(-self.xMove, -self.yMove)
+		else:
+			if self.steps == 40:
+				self.steps = 0
+			else:
+				self.steps += 1
 
-		"""Check for a snake collision/pellet collision"""
+		"""Check for a snake collision with pellet"""
 		lstCols = pygame.sprite.spritecollide(self, pellet_group, True)
 
 		"""Update the amount of pellets eaten"""
 		self.pellets = self.pellets + len(lstCols)
+
+		"""Check for a snake collision with super pellet"""
+		if len(pygame.sprite.spritecollide(self, spellet_group, True)):
+			self.superState = True
+			self.superState_start = time.time()
+
+			'''if self.xMove != 0:
+				self.xMove = (self.xMove / abs(self.xMove))
+				self.rect.move_ip(self.xMove, 0)
+				self.xMove = self.xMove * 2
+			self.x_dist = 2
+
+			if self.yMove != 0:
+				self.yMove = (self.yMove / abs(self.yMove))
+				self.rect.move_ip(0, self.yMove)
+				self.yMove = self.yMove * 2
+			self.y_dist = 2'''
