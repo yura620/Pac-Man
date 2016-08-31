@@ -5,6 +5,7 @@ import level
 import basicSprite
 from character import Character
 import time
+from npc import *
 
 if not pygame.font:
 	print('Warning, fonts disabled')
@@ -42,6 +43,8 @@ class GameMain:
 		self.sprites_character = None
 		self.sprites_pellet = None
 		self.sprites_spellet = None
+		self.npc = None
+		self.sprites_npc = None
 
 	def MainLoop(self):
 		"""This is the Main Loop of the Game"""
@@ -61,10 +64,10 @@ class GameMain:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					sys.exit()
-				if event.type == KEYDOWN:
+				elif event.type == KEYDOWN:
 					if (event.key == K_RIGHT) or (event.key == K_LEFT) or (event.key == K_UP) or (event.key == K_DOWN):
 						self.character.MoveKeyDown(event.key)
-				if event.type == KEYUP:
+				elif event.type == KEYUP:
 					if (event.key == K_RIGHT) or (event.key == K_LEFT) or (event.key == K_UP) or (event.key == K_DOWN):
 						self.character.MoveKeyUp(event.key)
 
@@ -75,11 +78,22 @@ class GameMain:
 			"""Update the snake sprite"""
 			self.sprites_character.update(self.sprites_block, self.sprites_pellet, self.sprites_spellet)
 
+			"""Update NPC sprites"""
+			self.sprites_npc.update(self.sprites_block)
+
+			if self.character.superState:
+				for npc in self.sprites_npc.sprites():
+					npc.SetScared(True)
+			else:
+				for npc in self.sprites_npc.sprites():
+					npc.SetScared(False)
+
 			"""Do the Drawing"""
 			self.screen.blit(self.background, (0, 0))		# draw one image onto another
 			self.sprites_character.draw(self.screen)
 			self.sprites_pellet.draw(self.screen)
 			self.sprites_spellet.draw(self.screen)
+			self.sprites_npc.draw(self.screen)
 			if pygame.font:
 				font = pygame.font.Font(None, 36)
 				text = font.render("Pellets %s" % self.character.pellets, 1, (255, 0, 0))
@@ -109,6 +123,9 @@ class GameMain:
 		"""Create the group of super-pellet sprites"""
 		self.sprites_spellet = pygame.sprite.Group()
 
+		"""Create the group of super-pellet sprites"""
+		self.sprites_npc = pygame.sprite.Group()
+
 		for y in range(len(layout)):
 			for x in range(len(layout[y])):
 				"""Get the center point for the rects"""
@@ -125,6 +142,12 @@ class GameMain:
 				elif layout[y][x] == self.level.SPELLET:
 					spellet = basicSprite.Sprite(centerPoint, img_list[self.level.SPELLET])
 					self.sprites_spellet.add(spellet)
+				elif layout[y][x] == self.level.NPC:
+					self.npc = NPC(centerPoint, img_list[self.level.NPC])
+					self.sprites_npc.add(self.npc)
+					"""We also need pellets where the monsters are"""
+					"""pellet = basicSprite.Sprite(centerPoint, img_list[self.level.PELLET])
+					self.sprites_npc.add(pellet)"""
 
 		"""Create the Snake group"""
 		self.sprites_character = pygame.sprite.RenderPlain(self.character)
