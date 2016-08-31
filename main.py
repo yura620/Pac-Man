@@ -4,6 +4,7 @@ import pygame
 import level
 import basicSprite
 from character import Character
+import time
 
 if not pygame.font:
 	print('Warning, fonts disabled')
@@ -60,15 +61,19 @@ class GameMain:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					sys.exit()
-				elif event.type == KEYDOWN:
+				if event.type == KEYDOWN:
 					if (event.key == K_RIGHT) or (event.key == K_LEFT) or (event.key == K_UP) or (event.key == K_DOWN):
 						self.character.MoveKeyDown(event.key)
-				elif event.type == KEYUP:
+				if event.type == KEYUP:
 					if (event.key == K_RIGHT) or (event.key == K_LEFT) or (event.key == K_UP) or (event.key == K_DOWN):
 						self.character.MoveKeyUp(event.key)
 
+				if event.type == KEYDOWN:
+					if event.key == K_ESCAPE:
+						sys.exit()
+
 			"""Update the snake sprite"""
-			self.sprites_character.update(self.sprites_block, self.sprites_pellet)
+			self.sprites_character.update(self.sprites_block, self.sprites_pellet, self.sprites_spellet)
 
 			"""Do the Drawing"""
 			self.screen.blit(self.background, (0, 0))		# draw one image onto another
@@ -81,6 +86,8 @@ class GameMain:
 				textpos = text.get_rect(centerx=self.background.get_width() / 2)
 				self.screen.blit(text, textpos)
 			pygame.display.flip()							# Update the full display Surface to the screen
+
+			time.sleep(0.005)
 
 	def LoadSprites(self):
 		"""Load all of the sprites that we need"""
