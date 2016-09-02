@@ -37,6 +37,7 @@ class GameMain:
 		self.screen = pygame.display.set_mode((self.width, self.height))
 
 		self.background = None
+		self.layout = None
 		self.sprites_block = None
 		self.character = None
 		self.sprites_character = None
@@ -45,6 +46,9 @@ class GameMain:
 
 	def MainLoop(self):
 		"""This is the Main Loop of the Game"""
+
+		"""Load the level"""
+		self.layout = self.level.getLayout()
 
 		"""Load All of our Sprites"""
 		self.LoadSprites()
@@ -73,7 +77,7 @@ class GameMain:
 						sys.exit()
 
 			"""Update the snake sprite"""
-			self.sprites_character.update(self.sprites_block, self.sprites_pellet, self.sprites_spellet)
+			self.sprites_character.update(self.layout, self.sprites_block, self.sprites_pellet, self.sprites_spellet)
 
 			"""Do the Drawing"""
 			self.screen.blit(self.background, (0, 0))		# draw one image onto another
@@ -92,12 +96,7 @@ class GameMain:
 	def LoadSprites(self):
 		"""Load all of the sprites that we need"""
 
-		"""calculate the center point offset"""
-		x_offset = (BLOCK_SIZE / 2)
-		y_offset = (BLOCK_SIZE / 2)
-
-		"""Load the level"""
-		layout = self.level.getLayout()
+		"""Load textures"""
 		img_list = self.level.getSprites()
 
 		"""Create the group of block sprites"""
@@ -109,21 +108,18 @@ class GameMain:
 		"""Create the group of super-pellet sprites"""
 		self.sprites_spellet = pygame.sprite.Group()
 
-		for y in range(len(layout)):
-			for x in range(len(layout[y])):
-				"""Get the center point for the rects"""
-				centerPoint = [(x * BLOCK_SIZE) + x_offset, (y * BLOCK_SIZE + y_offset)]
-
-				if layout[y][x] == self.level.BLOCK:
-					block = basicSprite.Sprite(centerPoint, img_list[self.level.BLOCK])
+		for y in range(len(self.layout)):
+			for x in range(len(self.layout[y])):
+				if self.layout[y][x][1] == self.level.BLOCK:
+					block = basicSprite.Sprite(self.layout[y][x][0], img_list[self.level.BLOCK])
 					self.sprites_block.add(block)
-				elif layout[y][x] == self.level.CHARACTER:
-					self.character = Character(centerPoint, img_list[self.level.CHARACTER])
-				elif layout[y][x] == self.level.PELLET:
-					pellet = basicSprite.Sprite(centerPoint, img_list[self.level.PELLET])
+				elif self.layout[y][x][1] == self.level.CHARACTER:
+					self.character = Character(self.layout[y][x][0], img_list[self.level.CHARACTER])
+				elif self.layout[y][x][1] == self.level.PELLET:
+					pellet = basicSprite.Sprite(self.layout[y][x][0], img_list[self.level.PELLET])
 					self.sprites_pellet.add(pellet)
-				elif layout[y][x] == self.level.SPELLET:
-					spellet = basicSprite.Sprite(centerPoint, img_list[self.level.SPELLET])
+				elif self.layout[y][x][1] == self.level.SPELLET:
+					spellet = basicSprite.Sprite(self.layout[y][x][0], img_list[self.level.SPELLET])
 					self.sprites_spellet.add(spellet)
 
 		"""Create the Snake group"""

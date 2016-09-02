@@ -30,13 +30,28 @@ class Level(levelBase.Level):
 		fullname = os.path.join('data', 'maps', self.level)
 		fullname = os.path.join(fullname, 'layout.lvl')
 
+		"""Get block types"""
 		with open(fullname) as f:
-			layout = []
+			bt = []
 			for line in f:
 				line = line.split()		# to deal with blank
 				if line:				# lines (ie skip them)
 					line = [int(i) for i in line]
-					layout.append(line)
+					bt.append(line)
+
+		x_offset = (self.blockSize / 2)
+		y_offset = (self.blockSize / 2)
+
+		"""Get layout [[block center x, block center y], block type]"""
+		layout = []
+		for y in range(len(bt)):
+			line = []
+			for x in range(len(bt[y])):
+				"""Get the center point for the rects"""
+				centerPoint = [(x * self.blockSize) + x_offset, (y * self.blockSize + y_offset)]
+
+				line.append([centerPoint, bt[y][x]])
+			layout.append(line)
 
 		return layout
 

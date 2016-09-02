@@ -63,7 +63,7 @@ class Character(basicSprite.Sprite):
 		elif key == K_DOWN:
 			self.yMove += -self.y_dist
 
-	def update(self, block_group, pellet_group, spellet_group):  # , monster_group):
+	def update(self, level, block_group, pellet_group, spellet_group):  # , monster_group):
 		"""Called when the Snake sprite should update itself"""
 
 		if self.superState:
@@ -100,7 +100,12 @@ class Character(basicSprite.Sprite):
 
 		if pygame.sprite.spritecollideany(self, block_group):
 			"""IF we hit a block, don't move - reverse the movement"""
-			self.rect.move_ip(-self.xMove, -self.yMove)
+			# self.rect.move_ip(-self.xMove, -self.yMove)
+
+			x = self.rect.center[0] // 24
+			y = self.rect.center[1] // 24
+
+			self.rect.center = level[y][x][0]
 		else:
 			if self.steps == 40:
 				self.steps = 0
