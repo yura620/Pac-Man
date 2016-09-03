@@ -3,6 +3,10 @@ from pygame.locals import *
 import pygame
 import time
 
+SUPER_STATE_START = pygame.USEREVENT + 1
+SUPER_STATE_OVER = pygame.USEREVENT + 2
+SNAKE_EATEN = pygame.USEREVENT + 3
+
 
 class Character(basicSprite.Sprite):
 	"""This is our character that will move around the screen"""
@@ -64,11 +68,7 @@ class Character(basicSprite.Sprite):
 			self.yMove += -self.y_dist
 
 	def update(self, level, block_group, pellet_group, spellet_group):  # , monster_group):
-		"""Called when the Snake sprite should update itself"""
-
-		if self.superState:
-			if (time.time() - self.superState_start) > self.superState_length:
-				self.superState = False
+		"""Called when the character sprite should update itself"""
 
 		if (self.xMove == 0) and (self.yMove == 0):
 			"""If we aren't moving just get out of here"""
@@ -120,17 +120,10 @@ class Character(basicSprite.Sprite):
 
 		"""Check for a snake collision with super pellet"""
 		if len(pygame.sprite.spritecollide(self, spellet_group, True)):
+			"""We have collided with a super pellet! Time to become Super!"""
 			self.superState = True
-			self.superState_start = time.time()
+			pygame.event.post(pygame.event.Event(SUPER_STATE_START, {}))
 
-			'''if self.xMove != 0:
-				self.xMove = (self.xMove / abs(self.xMove))
-				self.rect.move_ip(self.xMove, 0)
-				self.xMove = self.xMove * 2
-			self.x_dist = 2
-
-			if self.yMove != 0:
-				self.yMove = (self.yMove / abs(self.yMove))
-				self.rect.move_ip(0, self.yMove)
-				self.yMove = self.yMove * 2
-			self.y_dist = 2'''
+			"""Start a timer to figure out when the super state ends"""
+			pygame.time.set_timer(SUPER_STATE_OVER, 0)
+			pygame.time.set_timer(SUPER_STATE_OVER, 5000)

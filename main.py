@@ -3,7 +3,7 @@ from pygame.locals import *
 import pygame
 import level
 import basicSprite
-from character import Character
+from character import *
 import time
 import npc
 
@@ -68,12 +68,25 @@ class GameMain:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					sys.exit()
-				if event.type == KEYDOWN:
+				elif event.type == KEYDOWN:
 					if (event.key == K_RIGHT) or (event.key == K_LEFT) or (event.key == K_UP) or (event.key == K_DOWN):
 						self.character.MoveKeyDown(event.key)
-				if event.type == KEYUP:
+				elif event.type == KEYUP:
 					if (event.key == K_RIGHT) or (event.key == K_LEFT) or (event.key == K_UP) or (event.key == K_DOWN):
 						self.character.MoveKeyUp(event.key)
+				elif event.type == SUPER_STATE_OVER:
+					self.character.superState = False
+					"""Stop the timer"""
+					pygame.time.set_timer(SUPER_STATE_OVER, 0)
+					for n_p_c in self.sprites_npc.sprites():
+						n_p_c.SetScared(False)
+				elif event.type == SUPER_STATE_START:
+					for n_p_c in self.sprites_npc.sprites():
+						n_p_c.SetScared(True)
+				elif event.type == SNAKE_EATEN:
+					"""The character is dead!"""
+					"""For now just quit"""
+					sys.exit()
 
 				if event.type == KEYDOWN:
 					if event.key == K_ESCAPE:
@@ -84,13 +97,6 @@ class GameMain:
 
 			"""Update NPC sprites"""
 			self.sprites_npc.update(self.sprites_block)
-
-			if self.character.superState:
-				for npc in self.sprites_npc.sprites():
-					npc.SetScared(True)
-			else:
-				for npc in self.sprites_npc.sprites():
-					npc.SetScared(False)
 
 			"""Do the Drawing"""
 			self.screen.blit(self.background, (0, 0))		# draw one image onto another
