@@ -5,6 +5,7 @@ import level
 import basicSprite
 from character import Character
 import time
+import npc
 
 if not pygame.font:
 	print('Warning, fonts disabled')
@@ -43,6 +44,8 @@ class GameMain:
 		self.sprites_character = None
 		self.sprites_pellet = None
 		self.sprites_spellet = None
+		self.npc = None
+		self.sprites_npc = None
 
 	def MainLoop(self):
 		"""This is the Main Loop of the Game"""
@@ -79,11 +82,22 @@ class GameMain:
 			"""Update the snake sprite"""
 			self.sprites_character.update(self.layout, self.sprites_block, self.sprites_pellet, self.sprites_spellet)
 
+			"""Update NPC sprites"""
+			self.sprites_npc.update(self.sprites_block)
+
+			if self.character.superState:
+				for npc in self.sprites_npc.sprites():
+					npc.SetScared(True)
+			else:
+				for npc in self.sprites_npc.sprites():
+					npc.SetScared(False)
+
 			"""Do the Drawing"""
 			self.screen.blit(self.background, (0, 0))		# draw one image onto another
 			self.sprites_character.draw(self.screen)
 			self.sprites_pellet.draw(self.screen)
 			self.sprites_spellet.draw(self.screen)
+			self.sprites_npc.draw(self.screen)
 			if pygame.font:
 				font = pygame.font.Font(None, 36)
 				text = font.render("Pellets %s" % self.character.pellets, 1, (255, 0, 0))
@@ -108,6 +122,9 @@ class GameMain:
 		"""Create the group of super-pellet sprites"""
 		self.sprites_spellet = pygame.sprite.Group()
 
+		"""Create the group of npc sprites"""
+		self.sprites_npc = pygame.sprite.Group()
+
 		for y in range(len(self.layout)):
 			for x in range(len(self.layout[y])):
 				if self.layout[y][x][1] == self.level.BLOCK:
@@ -121,6 +138,9 @@ class GameMain:
 				elif self.layout[y][x][1] == self.level.SPELLET:
 					spellet = basicSprite.Sprite(self.layout[y][x][0], img_list[self.level.SPELLET])
 					self.sprites_spellet.add(spellet)
+				elif self.layout[y][x][1] == self.level.NPC:
+					self.npc = npc.NPC(self.layout[y][x][0], img_list[self.level.NPC])
+					self.sprites_npc.add(self.npc)
 
 		"""Create the Snake group"""
 		self.sprites_character = pygame.sprite.RenderPlain(self.character)

@@ -12,6 +12,7 @@ class Level(levelBase.Level):
 		self.CHARACTER = 1
 		self.PELLET = 2
 		self.SPELLET = 3
+		self.NPC = 4
 
 		fullname = os.path.join('data', 'maps', self.level)
 		fullname = os.path.join(fullname, 'info')
@@ -68,4 +69,7 @@ class Level(levelBase.Level):
 		character = [character01, character02, character03]
 		pellet, rect = load_image(os.path.join(path, 'pellet.png'), -1)
 		spellet, rect = load_image(os.path.join(path, 'super_pellet.png'), -1)
-		return [block, character, pellet, spellet]
+		npc01, rect = load_image(os.path.join(path, 'npc01.png'), -1)
+		npc02, rect = load_image(os.path.join(path, 'npc02.png'), -1)
+		npc = [npc01, npc02]
+		return [block, character, pellet, spellet, npc]
