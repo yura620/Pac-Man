@@ -86,11 +86,14 @@ class GameMain:
 				elif event.type == SNAKE_EATEN:
 					"""The character is dead!"""
 					"""For now just quit"""
-					sys.exit()
+					return  # sys.exit()
 
 				if event.type == KEYDOWN:
 					if event.key == K_ESCAPE:
-						sys.exit()
+						return  # sys.exit()
+					elif event.type == KEYDOWN:
+						if event.key == K_p:
+							self.Pause()
 
 			"""Update the snake sprite"""
 			self.sprites_character.update(self.layout, self.sprites_block, self.sprites_pellet, self.sprites_spellet, self.sprites_npc)
@@ -151,6 +154,36 @@ class GameMain:
 		"""Create the Snake group"""
 		self.sprites_character = pygame.sprite.RenderPlain(self.character)
 
+	def Pause(self):
+		"""Called when "p" button is pressed"""
+
+		width = 150
+		height = 50
+
+		"""Draw a solid rectangle"""
+		rect = [self.width / 2 - width / 2, self.height / 2 - height / 2, width, height]
+		pygame.draw.rect(self.screen, (255, 0, 0), rect, 5)
+
+		if pygame.font:
+			font = pygame.font.Font(None, 36)
+			text = font.render("Pause", 1, (255, 0, 0))
+			textpos = text.get_rect(centerx=self.width / 2, centery=self.height / 2)
+			#textpos.centerx = self.screen.get_rect().centerx
+			#textpos.centery = self.screen.get_rect().centery
+			self.screen.blit(text, textpos)
+
+		pygame.display.flip()  # Update the full display Surface to the screen
+
+		while 1:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					sys.exit()
+				elif event.type == KEYDOWN:
+					if event.key == K_p:
+						return
+
 if __name__ == "__main__":
 	gameMain = GameMain('Level001')
 	gameMain.MainLoop()
+
+	print("End")
