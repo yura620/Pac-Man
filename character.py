@@ -5,7 +5,8 @@ import time
 
 SUPER_STATE_START = pygame.USEREVENT + 1
 SUPER_STATE_OVER = pygame.USEREVENT + 2
-SNAKE_EATEN = pygame.USEREVENT + 3
+CHARACTER_EATEN = pygame.USEREVENT + 3
+PELLETS_COLLECTED = pygame.USEREVENT + 4
 
 
 class Character(basicSprite.Sprite):
@@ -125,6 +126,9 @@ class Character(basicSprite.Sprite):
 		"""Update the amount of pellets eaten"""
 		self.pellets = self.pellets + len(lstCols)
 
+		if self.pellets == 178:
+			pygame.event.post(pygame.event.Event(PELLETS_COLLECTED, {}))
+
 		"""Check for a snake collision with super pellet"""
 		if len(pygame.sprite.spritecollide(self, spellet_group, True)):
 			"""We have collided with a super pellet! Time to become Super!"""
@@ -149,4 +153,4 @@ class Character(basicSprite.Sprite):
 				npc.Eaten()
 			else:
 				"""Looks like we're dead"""
-				pygame.event.post(pygame.event.Event(SNAKE_EATEN, {}))
+				pygame.event.post(pygame.event.Event(CHARACTER_EATEN, {}))

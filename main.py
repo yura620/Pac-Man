@@ -83,10 +83,13 @@ class GameMain:
 				elif event.type == SUPER_STATE_START:
 					for n_p_c in self.sprites_npc.sprites():
 						n_p_c.SetScared(True)
-				elif event.type == SNAKE_EATEN:
+				elif event.type == CHARACTER_EATEN:
 					"""The character is dead!"""
 					"""For now just quit"""
-					return  # sys.exit()
+					self.GameEnd(False)
+					#return  # sys.exit()
+				elif event.type == PELLETS_COLLECTED:
+					self.GameEnd(True)
 
 				if event.type == KEYDOWN:
 					if event.key == K_ESCAPE:
@@ -168,8 +171,6 @@ class GameMain:
 			font = pygame.font.Font(None, 36)
 			text = font.render("Pause", 1, (255, 0, 0))
 			textpos = text.get_rect(centerx=self.width / 2, centery=self.height / 2)
-			#textpos.centerx = self.screen.get_rect().centerx
-			#textpos.centery = self.screen.get_rect().centery
 			self.screen.blit(text, textpos)
 
 		pygame.display.flip()  # Update the full display Surface to the screen
@@ -180,6 +181,44 @@ class GameMain:
 					sys.exit()
 				elif event.type == KEYDOWN:
 					if event.key == K_p:
+						return
+
+	def GameEnd(self, yes_no):
+		"""Called when "p" button is pressed"""
+
+		width = 250
+		height = 60
+
+		"""Draw a solid rectangle"""
+		rect = [self.width / 2 - width / 2, self.height / 2 - height / 2, width, height]
+		pygame.draw.rect(self.screen, (255, 0, 0), rect, 5)
+
+		if pygame.font:
+			font = pygame.font.Font(None, 36)
+			if yes_no:
+				text = font.render("You win!", 2, (255, 0, 0))
+				textpos = text.get_rect(centerx=self.width / 2, centery=self.height / 2 - 12)
+				self.screen.blit(text, textpos)
+			else:
+				text = font.render("You lose!", 2, (255, 0, 0))
+				textpos = text.get_rect(centerx=self.width / 2, centery=self.height / 2 - 12)
+				self.screen.blit(text, textpos)
+			text = font.render("Start new game: y/n", 1, (255, 0, 0))
+			textpos = text.get_rect(centerx=self.width / 2, centery=self.height / 2 + 12)
+			self.screen.blit(text, textpos)
+
+		pygame.display.flip()  # Update the full display Surface to the screen
+
+		while 1:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					sys.exit()
+				if event.type == KEYDOWN:
+					if event.key == K_n:
+						sys.exit()
+				if event.type == KEYDOWN:
+					if event.key == K_y:
+						self.LoadSprites()
 						return
 
 if __name__ == "__main__":
