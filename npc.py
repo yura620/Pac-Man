@@ -67,4 +67,5 @@ class NPC(basicSprite.Sprite):
 		position and stop being scared"""
 		self.rect = self.original_rect
 		self.scared = False
+		self.dist = 1
 		self.image = self.normal_image

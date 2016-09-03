@@ -93,7 +93,7 @@ class GameMain:
 						sys.exit()
 
 			"""Update the snake sprite"""
-			self.sprites_character.update(self.layout, self.sprites_block, self.sprites_pellet, self.sprites_spellet)
+			self.sprites_character.update(self.layout, self.sprites_block, self.sprites_pellet, self.sprites_spellet, self.sprites_npc)
 
 			"""Update NPC sprites"""
 			self.sprites_npc.update(self.sprites_block)

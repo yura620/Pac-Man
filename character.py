@@ -67,8 +67,15 @@ class Character(basicSprite.Sprite):
 		elif key == K_DOWN:
 			self.yMove += -self.y_dist
 
-	def update(self, level, block_group, pellet_group, spellet_group):  # , monster_group):
+	def update(self, level, block_group, pellet_group, spellet_group, npc_group):
 		"""Called when the character sprite should update itself"""
+
+		"""Check to see if we hit a Monster!"""
+		npc_lst = pygame.sprite.spritecollide(self, npc_group, False)
+
+		if len(npc_lst) > 0:
+			"""Alright we have hit a Monster!"""
+			self.NpcCollide(npc_lst)
 
 		if (self.xMove == 0) and (self.yMove == 0):
 			"""If we aren't moving just get out of here"""
@@ -127,3 +134,19 @@ class Character(basicSprite.Sprite):
 			"""Start a timer to figure out when the super state ends"""
 			pygame.time.set_timer(SUPER_STATE_OVER, 0)
 			pygame.time.set_timer(SUPER_STATE_OVER, 5000)
+
+	def NpcCollide(self, npc_lst):
+		"""This Function is called when the character collides with the npc
+		lst npc is a list of npc sprites that it has hit."""
+
+		if len(npc_lst) <= 0:
+			"""If the list is empty, just get out of here"""
+			return
+
+		"""Loop through the monsters and see what should happen"""
+		for npc in npc_lst:
+			if npc.scared:
+				npc.Eaten()
+			else:
+				"""Looks like we're dead"""
+				pygame.event.post(pygame.event.Event(SNAKE_EATEN, {}))
